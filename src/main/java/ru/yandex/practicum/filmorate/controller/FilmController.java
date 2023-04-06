@@ -15,10 +15,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-
     private final Map<Integer, Film> films = new HashMap<>();
     private int idFilm = 1;
-    private final LocalDate MINIMAL_DATE_RELEASE = LocalDate.of(1985,12,28);
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -27,7 +25,7 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        if (film.getReleaseDate().isBefore(MINIMAL_DATE_RELEASE)) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1985,12,28))) {
             log.error("Дата релиза фильма оказалась ранее 28 12 1895 года.");
             throw new ValidationException("Дата релиза фильма не может быть ранее 28 12 1895 года.");
         } else {
@@ -40,7 +38,7 @@ public class FilmController {
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
-        if (film.getReleaseDate().isBefore(MINIMAL_DATE_RELEASE)) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1985,12,28))) {
             log.error("Дата релиза фильма оказалась ранее 28 12 1895 года.");
             throw new ValidationException("Дата релиза фильма не может быть ранее 28 12 1895 года.");
         }
