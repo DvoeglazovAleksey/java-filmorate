@@ -1,12 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.validation.ValidationException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
