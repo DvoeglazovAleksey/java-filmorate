@@ -12,7 +12,6 @@ public class User {
     private Integer id;
     @Email @NotEmpty
     private String email;
-    @NotEmpty
     @NotBlank
     private String login;
     private String name;
