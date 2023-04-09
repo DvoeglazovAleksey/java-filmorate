@@ -44,3 +44,10 @@ build/
 
 *.db
 db/*
+
+.mvn
+mvnw
+mvnw.cmd
+*.DS_Store
+.properties
+target/
