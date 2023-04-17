@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -24,6 +25,7 @@ public class UserService {
         }
         return userStorage.getUsers().get(Long.parseLong(id));
     }
+
     public User putFriend(String id, String friendId) {
         Long idUser = Long.parseLong(id);
         Long idFriend = Long.parseLong(friendId);
@@ -51,7 +53,7 @@ public class UserService {
     public Collection<User> findFriend(String id) {
         if (!(userStorage.getUsers().containsKey(Long.parseLong(id)))) {
             throw new NullPointerException("Пользователь отсутствует с id" + id);
-        }else {
+        } else {
             List<User> usersFriend = new ArrayList<>();
             for (Long aLong : userStorage.getUsers().get(Long.parseLong(id)).getFriends()) {
                 usersFriend.add(userStorage.getUsers().get(aLong));
