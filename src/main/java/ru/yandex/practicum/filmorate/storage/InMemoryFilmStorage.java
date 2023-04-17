@@ -36,7 +36,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film put(Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.error("Дата релиза фильма оказалась ранее 28.12.1895.");
             throw new ValidationException("Дата релиза фильма не может быть ранее 28.12.1895.");
         }

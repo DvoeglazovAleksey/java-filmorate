@@ -14,6 +14,7 @@ import java.util.Map;
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
     private Long idUser = 1L;
+
     @Override
     public User create(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
@@ -53,7 +54,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (!(users.containsKey(Long.parseLong(id)))) {
             throw new NullPointerException("User c " + id + " нет в базе, для удаления");
         } else {
-           return users.remove(Long.parseLong(id));
+            return users.remove(Long.parseLong(id));
         }
     }
 
