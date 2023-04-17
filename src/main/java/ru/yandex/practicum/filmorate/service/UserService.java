@@ -21,7 +21,7 @@ public class UserService {
 
     public User findUser(String id) {
         if (!(userStorage.getUsers().containsKey(Long.parseLong(id)))) {
-            throw new NullPointerException("Отсутствует пользователь с id" + id);
+            throw new NullPointerException("Пользователь не найден с id " + id);
         }
         return userStorage.getUsers().get(Long.parseLong(id));
     }
@@ -30,7 +30,7 @@ public class UserService {
         Long idUser = Long.parseLong(id);
         Long idFriend = Long.parseLong(friendId);
         if ((!(userStorage.getUsers().containsKey(idUser)) || !(userStorage.getUsers().containsKey(idFriend)))) {
-            throw new NullPointerException("Отсутствует пользователь с id или friendId" + id + "," + friendId);
+            throw new NullPointerException("Пользователь не найден с id или friendId " + id + "," + friendId);
         } else {
             userStorage.getUsers().get(idUser).getFriends().add(idFriend);
             userStorage.getUsers().get(idFriend).getFriends().add(idUser);
@@ -42,7 +42,7 @@ public class UserService {
         Long idUser = Long.parseLong(id);
         Long idFriend = Long.parseLong(friendId);
         if ((!(userStorage.getUsers().containsKey(idUser)) || !(userStorage.getUsers().containsKey(idFriend)))) {
-            throw new NullPointerException("Отсутствует пользователь с id или friendId" + id + "," + friendId);
+            throw new NullPointerException("Пользователь не найден с id или friendId " + id + "," + friendId);
         } else {
             userStorage.getUsers().get(idUser).getFriends().remove(idFriend);
             userStorage.getUsers().get(idFriend).getFriends().remove(idUser);
@@ -52,7 +52,7 @@ public class UserService {
 
     public Collection<User> findFriend(String id) {
         if (!(userStorage.getUsers().containsKey(Long.parseLong(id)))) {
-            throw new NullPointerException("Пользователь отсутствует с id" + id);
+            throw new NullPointerException("Пользователь не найден с id " + id);
         } else {
             List<User> usersFriend = new ArrayList<>();
             for (Long aLong : userStorage.getUsers().get(Long.parseLong(id)).getFriends()) {
@@ -66,7 +66,7 @@ public class UserService {
         Long idUser = Long.parseLong(id);
         Long idFriend = Long.parseLong(friendId);
         if (!(userStorage.getUsers().containsKey(idUser)) || !(userStorage.getUsers().containsKey(idFriend))) {
-            throw new NullPointerException("Отсутствует пользователь с id или friendId" + id + "," + friendId);
+            throw new NullPointerException("Пользователь не найден с id или friendId " + id + "," + friendId);
         } else {
             Collection<User> mutualFriends = new ArrayList<>();
             for (Long friend : userStorage.getUsers().get(idUser).getFriends()) {
