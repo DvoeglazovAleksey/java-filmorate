@@ -4,25 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
 
 @RestController
 public class UserController {
-    private final InMemoryUserStorage inMemoryUserStorage;
     private final UserService userService;
 
     @Autowired
-    public UserController(InMemoryUserStorage inMemoryUserStorage, UserService userService) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping("/users")
     public Collection<User> findAll() {
-        return inMemoryUserStorage.getUsers().values();
+        return userService.findAllUser();
     }
 
     @GetMapping("/users/{id}")
@@ -42,12 +39,12 @@ public class UserController {
 
     @PostMapping("/users")
     public User create(@Valid @RequestBody User user) {
-        return inMemoryUserStorage.create(user);
+        return userService.createUser(user);
     }
 
     @PutMapping("/users")
     public User put(@Valid @RequestBody User user) {
-        return inMemoryUserStorage.put(user);
+        return userService.putUser(user);
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")

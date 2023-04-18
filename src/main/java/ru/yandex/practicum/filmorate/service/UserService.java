@@ -19,11 +19,23 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
+    public Collection<User> findAllUser() {
+        return userStorage.getUsers().values();
+    }
+
     public User findUser(String id) {
         if (!(userStorage.getUsers().containsKey(Long.parseLong(id)))) {
             throw new NullPointerException("Пользователь не найден с id " + id);
         }
         return userStorage.getUsers().get(Long.parseLong(id));
+    }
+
+    public User createUser(User user) {
+        return userStorage.create(user);
+    }
+
+    public User putUser(User user) {
+        return userStorage.put(user);
     }
 
     public User putFriend(String id, String friendId) {

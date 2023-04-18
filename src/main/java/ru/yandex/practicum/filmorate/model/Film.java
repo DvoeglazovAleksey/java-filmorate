@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import lombok.Getter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Getter
 public class Film {
     private Long id;
     @NotBlank

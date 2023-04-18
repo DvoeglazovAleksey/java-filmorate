@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,11 +22,23 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
+    public Collection<Film> findAllFilms() {
+        return filmStorage.getFilms().values();
+    }
+
     public Film findFilm(String id) {
         if (!(filmStorage.getFilms().containsKey(Long.parseLong(id)))) {
             throw new NullPointerException("Переданного фильма нет в базе с id" + id);
         }
         return filmStorage.getFilms().get(Long.parseLong(id));
+    }
+
+    public Film createFilm(Film film) {
+        return filmStorage.create(film);
+    }
+
+    public Film putFilm(Film film) {
+        return filmStorage.put(film);
     }
 
     public Film putLikes(String id, String userId) {
