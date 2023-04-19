@@ -1,60 +1,60 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
-@Slf4j
 @RestController
-@RequestMapping("/users")
 public class UserController {
+    private final UserService userService;
 
-    private final Map<Integer, User> users = new HashMap<>();
-    private int idUser = 1;
-
-    @GetMapping
-    public Collection<User> findAll() {
-        return users.values();
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @PostMapping
-    public User create(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-         if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Дата рождения {}", user.getBirthday());
-            throw new ValidationException("Дата рождения не может быть в будущем.");
-        } else {
-            user.setId(idUser++);
-            users.put(user.getId(), user);
-            log.info("Добавлен пользователь {}", user.getName());
-        }
-        return user;
+    @GetMapping("/users")
+    public Collection<User> getAllUser() {
+        return userService.getAllUser();
     }
 
-    @PutMapping
-    public User put(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.info("Обновлен пользователь {}", user.getName());
-        } else if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Дата рождения {}", user.getBirthday());
-            throw new ValidationException("Дата рождения не может быть в будущем.");
-        } else if (!users.containsKey(user.getId())) {
-            log.error("Нельзя обновить: пользователя с id {} нет в базе данных", user.getId());
-            throw new ValidationException("Пользователя нет в базе данных.");
-        } else {
-            users.put(user.getId(), user);
-            log.info("Обновлен пользователь {}", user.getName());
-        }
-        return user;
+    @GetMapping("/users/{id}")
+    public Optional<User> findUser(@PathVariable String id) {
+        return userService.findUser(id);
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public Optional<Collection<User>> findFriend(@PathVariable String id) {
+        return userService.findFriend(id);
+    }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public Collection<User> mutualFriends(@PathVariable String id, @PathVariable String otherId) {
+        return userService.listMutualFriends(id, otherId);
+    }
+
+    @PostMapping("/users")
+    public User addUser(@Valid @RequestBody User user) {
+        return userService.addUser(user);
+    }
+
+    @PutMapping("/users")
+    public User updateUser(@Valid @RequestBody User user) {
+        return userService.updateUser(user);
+    }
+
+    @PutMapping("/users/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable String id, @PathVariable String friendId) {
+        return userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    public Long deleteFriend(@PathVariable String id, @PathVariable String friendId) {
+        return userService.deleteFriend(id, friendId);
     }
 }
