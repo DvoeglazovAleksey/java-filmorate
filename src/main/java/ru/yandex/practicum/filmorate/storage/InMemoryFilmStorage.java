@@ -14,7 +14,7 @@ import java.util.Map;
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
-    private Long idFilm = 1L;
+    private long idFilm = 1;
 
     @Override
     public Map<Long, Film> getFilms() {
@@ -22,7 +22,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film create(Film film) {
+    public Film add(Film film) {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.error("Дата релиза фильма оказалась раньше 28.12.1895.");
             throw new ValidationException("Дата релиза фильма не может быть ранее 28.12.1895.");
@@ -35,7 +35,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film put(Film film) {
+    public Film update(Film film) {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.error("Дата релиза фильма оказалась ранее 28.12.1895.");
             throw new ValidationException("Дата релиза фильма не может быть ранее 28.12.1895.");

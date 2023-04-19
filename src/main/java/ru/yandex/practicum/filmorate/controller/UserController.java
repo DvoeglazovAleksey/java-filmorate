@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -18,17 +19,17 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public Collection<User> findAll() {
-        return userService.findAllUser();
+    public Collection<User> getAllUser() {
+        return userService.getAllUser();
     }
 
     @GetMapping("/users/{id}")
-    public User findUser(@PathVariable String id) {
+    public Optional<User> findUser(@PathVariable String id) {
         return userService.findUser(id);
     }
 
     @GetMapping("/users/{id}/friends")
-    public Collection<User> findFriend(@PathVariable String id) {
+    public Optional<Collection<User>> findFriend(@PathVariable String id) {
         return userService.findFriend(id);
     }
 
@@ -38,18 +39,18 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public User create(@Valid @RequestBody User user) {
-        return userService.createUser(user);
+    public User addUser(@Valid @RequestBody User user) {
+        return userService.addUser(user);
     }
 
     @PutMapping("/users")
-    public User put(@Valid @RequestBody User user) {
-        return userService.putUser(user);
+    public User updateUser(@Valid @RequestBody User user) {
+        return userService.updateUser(user);
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    public User putFriend(@PathVariable String id, @PathVariable String friendId) {
-        return userService.putFriend(id, friendId);
+    public User addFriend(@PathVariable String id, @PathVariable String friendId) {
+        return userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")

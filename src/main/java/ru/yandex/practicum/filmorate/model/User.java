@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Data
 public class User {
-    private Long id;
+    private long id;
     @Email
     @NotEmpty
     private String email;

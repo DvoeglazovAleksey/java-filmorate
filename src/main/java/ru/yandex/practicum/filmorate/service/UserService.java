@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -19,26 +20,26 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public Collection<User> findAllUser() {
+    public Collection<User> getAllUser() {
         return userStorage.getUsers().values();
     }
 
-    public User findUser(String id) {
+    public Optional<User> findUser(String id) {
         if (!(userStorage.getUsers().containsKey(Long.parseLong(id)))) {
             throw new NullPointerException("Пользователь не найден с id " + id);
         }
-        return userStorage.getUsers().get(Long.parseLong(id));
+        return Optional.ofNullable(userStorage.getUsers().get(Long.parseLong(id)));
     }
 
-    public User createUser(User user) {
-        return userStorage.create(user);
+    public User addUser(User user) {
+        return userStorage.add(user);
     }
 
-    public User putUser(User user) {
-        return userStorage.put(user);
+    public User updateUser(User user) {
+        return userStorage.update(user);
     }
 
-    public User putFriend(String id, String friendId) {
+    public User addFriend(String id, String friendId) {
         Long idUser = Long.parseLong(id);
         Long idFriend = Long.parseLong(friendId);
         if ((!(userStorage.getUsers().containsKey(idUser)) || !(userStorage.getUsers().containsKey(idFriend)))) {
@@ -62,7 +63,7 @@ public class UserService {
         return idUser;
     }
 
-    public Collection<User> findFriend(String id) {
+    public Optional<Collection<User>> findFriend(String id) {
         if (!(userStorage.getUsers().containsKey(Long.parseLong(id)))) {
             throw new NullPointerException("Пользователь не найден с id " + id);
         } else {
@@ -70,7 +71,7 @@ public class UserService {
             for (Long aLong : userStorage.getUsers().get(Long.parseLong(id)).getFriends()) {
                 usersFriend.add(userStorage.getUsers().get(aLong));
             }
-            return usersFriend;
+            return Optional.of(usersFriend);
         }
     }
 

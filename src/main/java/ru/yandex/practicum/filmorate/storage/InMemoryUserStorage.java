@@ -13,10 +13,10 @@ import java.util.Map;
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
-    private Long idUser = 1L;
+    private long idUser = 1;
 
     @Override
-    public User create(User user) {
+    public User add(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
@@ -32,7 +32,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User put(User user) {
+    public User update(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.info("Обновлен пользователь {}", user.getName());
@@ -50,11 +50,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User delete(String id) {
+    public long delete(String id) {
         if (!(users.containsKey(Long.parseLong(id)))) {
             throw new NullPointerException("User c " + id + " нет в базе, для удаления");
         } else {
-            return users.remove(Long.parseLong(id));
+            users.remove(Long.parseLong(id));
+            return Long.parseLong(id);
         }
     }
 

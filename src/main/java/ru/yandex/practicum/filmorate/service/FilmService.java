@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,26 +23,26 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
-    public Collection<Film> findAllFilms() {
+    public Collection<Film> getAllFilms() {
         return filmStorage.getFilms().values();
     }
 
-    public Film findFilm(String id) {
+    public Optional<Film> findFilm(String id) {
         if (!(filmStorage.getFilms().containsKey(Long.parseLong(id)))) {
             throw new NullPointerException("Переданного фильма нет в базе с id" + id);
         }
-        return filmStorage.getFilms().get(Long.parseLong(id));
+        return Optional.ofNullable(filmStorage.getFilms().get(Long.parseLong(id)));
     }
 
-    public Film createFilm(Film film) {
-        return filmStorage.create(film);
+    public Film addFilm(Film film) {
+        return filmStorage.add(film);
     }
 
-    public Film putFilm(Film film) {
-        return filmStorage.put(film);
+    public Film updateFilm(Film film) {
+        return filmStorage.update(film);
     }
 
-    public Film putLikes(String id, String userId) {
+    public Film addLikes(String id, String userId) {
         Long idFilm = Long.parseLong(id);
         Long idUser = Long.parseLong(userId);
         if (!(filmStorage.getFilms().containsKey(idFilm)) || (!(userStorage.getUsers().containsKey(idUser)))) {
