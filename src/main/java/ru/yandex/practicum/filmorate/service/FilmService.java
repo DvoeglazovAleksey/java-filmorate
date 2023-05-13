@@ -12,8 +12,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.String.format;
 
@@ -21,17 +20,26 @@ import static java.lang.String.format;
 @Slf4j
 public class FilmService {
     private final FilmStorage filmStorage;
+
     private final UserStorage userStorage;
 
+    private final GenreService genreService;
+
+    private final MpaService mpaService;
+
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, GenreService genreService, MpaService mpaService) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.genreService = genreService;
+        this.mpaService = mpaService;
     }
 
     public Collection<Film> findAllFilms() {
-        log.info("Сохранено фильмов: {}", filmStorage.findAllFilms().size());
-        return filmStorage.findAllFilms();
+        List<Film> films = filmStorage.findAllFilms();
+        updateGenreAndMpa(films);
+        log.info("Получено фильмов: {}", films.size());
+        return films;
     }
 
     public Film findFilmById(long filmId) {
@@ -42,6 +50,10 @@ public class FilmService {
             log.debug("Фильма с id={} нет в базе", filmId);
             throw new NullPointerException(format("Фильма с id= %s нет в базе", filmId));
         }
+        updateGenresByFilm(film);
+        if (film.getMpa() != null) {
+            film.setMpa(mpaService.findMpaById(film.getMpa().getId()));
+        }
         log.info("Получили фильм по id={}", filmId);
         return film;
     }
@@ -49,14 +61,28 @@ public class FilmService {
     public Film addFilm(Film film) {
         validationBeforeAddFilm(film);
         Film createdFilm = filmStorage.addFilm(film);
+        if (createdFilm.getGenres() != null) {
+            film.getGenres().forEach(genre -> genreService.addGenreToFilm(film.getId(), genre.getId()));
+        }
         log.info("Добавили фильм: {}", createdFilm.getName());
         return createdFilm;
     }
 
     public Film updateFilm(Film film) {
         validateFilmById(film.getId());
+        filmStorage.updateFilm(film);
+        if (film.getGenres() != null) {
+            genreService.deleteAllGenresFromFilm(film.getId());
+            Set<Genre> genres = film.getGenres();
+            genres.forEach(genre -> genreService.addGenreToFilm(film.getId(), genre.getId()));
+            genres.clear();
+            updateGenresByFilm(film);
+        }
+        if (film.getMpa() != null) {
+            film.setMpa(mpaService.findMpaById(film.getMpa().getId()));
+        }
         log.info("Обновлен фильм c id = {}", film.getId());
-        return filmStorage.updateFilm(film);
+        return film;
     }
 
     public void addLikes(long filmId, long userId) {
@@ -73,38 +99,42 @@ public class FilmService {
         filmStorage.deleteLikeFromFilm(filmId, userId);
     }
 
-    public List<Film> popular(int count) {
+    public List<Film> getPopular(int count) {
         if (count <= 0) {
             log.error("popular: Параметр количества фильмов меньше или равен нулю.");
             throw new ValidationException("Параметр количества фильмов меньше или равен нулю: count = " + count);
         }
-        return filmStorage.popularFilms(count);
+        List<Film> films = filmStorage.getPopularFilms(count);
+        updateGenreAndMpa(films);
+        return films;
     }
 
-    public List<Genre> findAllGenres() {
-        log.info("Получен список жанров");
-        return filmStorage.findAllGenres();
-    }
-
-    public Genre findGenreById(int genreId) {
-        try {
-            return filmStorage.findGenreById(genreId);
-        } catch (EmptyResultDataAccessException e) {
-            log.debug("Жанр с id = {} не найден", genreId);
-            throw new NullPointerException(format("Жанр с id = %s не найден", genreId));
+    private void updateGenresByFilm(Film film) {
+        List<Long> filmIds = new ArrayList<>();
+        filmIds.add(film.getId());
+        Map<Long, Set<Genre>> genres2 = genreService.getGenresByFilmList(filmIds);
+        if (genres2.get(film.getId()) != null) {
+            film.setGenres(genres2.get(film.getId()));
         }
     }
 
-    public List<Mpa> findAllMpa() {
-        return filmStorage.findAllMpa();
-    }
-
-    public Mpa findMpaById(int mpaId) {
-        try {
-            return filmStorage.findMpaById(mpaId);
-        } catch (EmptyResultDataAccessException e) {
-            log.debug("Mpa с id={} не найден", mpaId);
-            throw new NullPointerException(format("Mpa с id = %s не найден", mpaId));
+    private void updateGenreAndMpa(List<Film> films) {
+        List<Long> filmId = new ArrayList<>();
+        for (Film film : films) {
+            filmId.add(film.getId());
+        }
+        Map<Long, Set<Genre>> genres = genreService.getGenresByFilmList(filmId);
+        Map<Long, Mpa> mpa = mpaService.getMpaByFilmList(filmId);
+        filmId.clear();
+        if (!(films.isEmpty())) {
+            for (Film film : films) {
+                if (genres.get(film.getId()) != null) {
+                    film.setGenres(genres.get(film.getId()));
+                }
+                if (mpa.get(film.getId()) != null) {
+                    film.setMpa(mpa.get(film.getId()));
+                }
+            }
         }
     }
 

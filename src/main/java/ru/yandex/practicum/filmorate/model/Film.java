@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -13,6 +15,8 @@ import java.util.Set;
 
 @Data
 @Builder
+@Getter
+@Setter
 public class Film {
     private long id;
     @NotBlank
@@ -26,5 +30,7 @@ public class Film {
     @NotNull
     private Mpa mpa;
     private final Set<Long> likes = new HashSet<>();
-    private final Set<Genre> genres = new HashSet<>();
+    @Builder.Default
+    private Set<Genre> genres = new HashSet<>();
+
 }
